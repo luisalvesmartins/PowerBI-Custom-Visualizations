@@ -1,0 +1,25 @@
+{
+    "visual":{
+        "name":"lAMGanttChart",
+        "displayName":"LAMGanttChart",
+        "guid":"lAMGanttChart677F5FDDA1EF46A79B69EBD294F09D2C",
+        "visualClassName":"Visual",
+        "version":"1.0.0",
+        "description":"LAM Gantt Chart",
+        "supportUrl":"http://github.com/luisalvesmartins/powerbi-custom-visualizations",
+        "gitHubUrl":"http://github.com/luisalvesmartins/powerbi-custom-visualizations"
+    },
+    "apiVersion":"2.6.0",
+    "author":{
+        "name":"Luis Alves Martins",
+        "email":"luis.martins@microsoft.com"
+    },
+    "assets":{
+        "icon":"assets/icon.png"
+    },
+    "externalJS":null,
+    "style":"style/visual.less",
+    "capabilities":"capabilities.json",
+    "dependencies":null,
+    "stringResources":[]
+}

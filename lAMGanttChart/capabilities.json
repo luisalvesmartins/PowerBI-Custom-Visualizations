@@ -1,0 +1,141 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Priority Index",
+            "name": "priorityIndex",
+            "kind": "GroupingOrMeasure"
+        },
+        {
+            "displayName": "Title",
+            "name": "title",
+            "kind": "GroupingOrMeasure"
+        },
+        {
+            "displayName": "State",
+            "name": "state",
+            "kind": "GroupingOrMeasure"
+        },
+        {
+            "displayName": "Owner",
+            "name": "owner",
+            "kind": "GroupingOrMeasure"
+        },
+        {
+            "displayName": "Start Date",
+            "name": "startDate",
+            "kind": "GroupingOrMeasure"
+        },
+        {
+            "displayName": "End Date",
+            "name": "endDate",
+            "kind": "GroupingOrMeasure"
+        },
+        {
+            "displayName": "Tags",
+            "name": "Tags",
+            "kind": "GroupingOrMeasure"
+        }
+    ],
+    "objects": {
+        "dataPoint": {
+            "displayName": "Chart Properties",
+            "properties": {
+                "BACKGROUND_COLOR_ODD": {
+                    "displayName": "Background Color Odd",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "BACKGROUND_COLOR_EVEN": {
+                    "displayName": "Background Color Even",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "BORDER_COLOR": {
+                    "displayName": "Border Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "BARHEIGHT": {
+                    "displayName": "Bar Height",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "BARPADDING": {
+                    "displayName": "Bar Padding",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "FONTTITLE": {
+                    "displayName": "Font Size Bar Title",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "FONTOWNER": {
+                    "displayName": "Font Size Bar Owner",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "FONTMONTH": {
+                    "displayName": "Font Size Title Month",
+                    "type": { 
+                        "numeric": true
+                    }
+                },
+                "INITIALDATE": {
+                    "displayName": "Initial Date(yyyy-mm-dd)",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "FINALDATE": {
+                    "displayName": "Final Date(yyyy-mm-dd)",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "debug":{ 
+                    "displayName": "Debug",
+                    "type": { 
+                        "bool":true
+                    }
+                }
+            }
+        }
+    },
+    "dataViewMappings": [
+        {
+            "table": {
+                "rows": {
+                    "select": [
+                        { "bind": { "to": "priorityIndex" } },
+                        { "bind": { "to": "title" } },
+                        { "bind": { "to": "state" } },
+                        { "bind": { "to": "owner" } },
+                        { "bind": { "to": "startDate" } },
+                        { "bind": { "to": "endDate" } },
+                        { "bind": { "to": "Tags" } }
+                    ]
+                }
+            }
+        }
+    ]
+}

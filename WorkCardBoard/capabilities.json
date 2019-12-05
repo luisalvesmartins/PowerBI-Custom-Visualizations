@@ -1,0 +1,137 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Priority Index",
+            "name": "priorityIndex",
+            "kind": "GroupingOrMeasure"
+        },
+        {
+            "displayName": "Title",
+            "name": "measure",
+            "kind": "GroupingOrMeasure"
+        },
+        {
+            "displayName": "State",
+            "name": "state",
+            "kind": "GroupingOrMeasure"
+        },
+        {
+            "displayName": "Owner",
+            "name": "owner",
+            "kind": "GroupingOrMeasure"
+        },
+        {
+            "displayName": "Highlight",
+            "name": "highlight",
+            "kind": "GroupingOrMeasure"
+        }
+    ],
+    "objects": {
+        "dataPoint": {
+            "displayName": "EPMap Properties",
+            "properties": {
+                "defaultColor": {
+                    "displayName": "Engagement Background Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fillOwner": {
+                    "displayName": "Owner Background Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "highlightColor": {
+                    "displayName": "Highlight Background Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Text Size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "fontSizeOwner": {
+                    "displayName": "Text Size Owner",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "limitLength": {
+                    "displayName": "Max Chars in Title",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "numberOfColumns": {
+                    "displayName": "Number of Columns",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "swimLaneWidth": {
+                    "displayName": "Width of lanes(px)",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "stageTitle": {
+                    "displayName": "Stage Titles (delim by |)",
+                    "type": {
+                        "text":true
+                    }
+                },
+                "stageHead": {
+                    "displayName": "Stage Status(first two chars)",
+                    "type": {
+                        "text":true
+                    }
+                },
+                "stageColors": {
+                    "displayName": "Stage Colors(delim by |)",
+                    "type": {
+                        "text":true
+                    }
+                },
+                "debug":{ 
+                    "displayName": "Debug",
+                    "type": { 
+                        "bool":true
+                    }
+                }
+            }
+        }
+    },
+    "dataViewMappings": [
+        {
+            "table": {
+                "rows": {
+                    "select": [
+                        { "bind": { "to": "priorityIndex" } },
+                        { "bind": { "to": "measure" } },
+                        { "bind": { "to": "state" } },
+                        { "bind": { "to": "owner" } },
+                        { "bind": { "to": "highlight" } }
+                    ]
+                }
+            }
+        }
+    ]
+}

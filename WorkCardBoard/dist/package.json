@@ -1,0 +1,17 @@
+{
+    "version": "1.1",
+    "author": {"name":"Luis Alves Martins","email":"lualvesm@microsoft.com"},
+    "resources": [
+        {
+            "resourceId": "rId0",
+            "sourceType": 5,
+            "file": "resources/ePEngagementMap9FBFB7B1E5084AD58D9298A9AC409364.pbiviz.json"
+        }
+    ],
+    "visual": {"name":"EPEngagementMap","displayName":"EP Engagement Map","guid":"ePEngagementMap9FBFB7B1E5084AD58D9298A9AC409364","visualClassName":"Visual","version":"1.1","description":"EP Engagement Map","supportUrl":"www.microsoft.com","gitHubUrl":"www.github.com/luisalvesmartins"},
+    "metadata": {
+        "pbivizjson": {
+            "resourceId": "rId0"
+        }
+    }  
+}

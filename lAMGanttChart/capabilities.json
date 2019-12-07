@@ -34,6 +34,26 @@
             "displayName": "Tags",
             "name": "Tags",
             "kind": "GroupingOrMeasure"
+        },
+        {
+            "displayName": "Activity Type",
+            "name": "activityType",
+            "kind": "GroupingOrMeasure"
+        }
+        ,{
+            "displayName": "Participant",
+            "name": "partic",
+            "kind": "GroupingOrMeasure"
+        }
+        ,{
+            "displayName": "Partic.Start Date",
+            "name": "particStartDate",
+            "kind": "GroupingOrMeasure"
+        },
+        {
+            "displayName": "Duration",
+            "name": "particEndDate",
+            "kind": "GroupingOrMeasure"
         }
     ],
     "objects": {
@@ -112,6 +132,22 @@
                         "text": true
                     }
                 },
+                "TAGCOLOR": {
+                    "displayName": "Background Color Tag",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "ORDERBYPI":{ 
+                    "displayName": "Order by Priority",
+                    "type": { 
+                        "bool":true
+                    }
+                },
                 "debug":{ 
                     "displayName": "Debug",
                     "type": { 
@@ -132,7 +168,11 @@
                         { "bind": { "to": "owner" } },
                         { "bind": { "to": "startDate" } },
                         { "bind": { "to": "endDate" } },
-                        { "bind": { "to": "Tags" } }
+                        { "bind": { "to": "Tags" } },
+                        { "bind": { "to": "activityType" } },
+                        { "bind": { "to": "partic" } },
+                        { "bind": { "to": "particStartDate" } },
+                        { "bind": { "to": "particEndDate" } }
                     ]
                 }
             }

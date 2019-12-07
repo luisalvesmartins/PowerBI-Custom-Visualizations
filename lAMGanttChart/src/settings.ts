@@ -19,6 +19,8 @@ export class VisualSettings extends DataViewObjectsParser {
       public FONTYEAR : number = this.FONTMONTH+2;
       public INITIALDATE : string = "";
       public FINALDATE : string = "";
+      public TAGCOLOR:string ="#bbbbbb";
+      public ORDERBYPI:boolean=false;
 
       public debug:boolean=false;
 }

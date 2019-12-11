@@ -21,6 +21,7 @@ export class VisualSettings extends DataViewObjectsParser {
       public FINALDATE : string = "";
       public TAGCOLOR:string ="#bbbbbb";
       public ORDERBYPI:boolean=false;
+      public SHOWDETAIL:boolean=false;
 
       public debug:boolean=false;
 }

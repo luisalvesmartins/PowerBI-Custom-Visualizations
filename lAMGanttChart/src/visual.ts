@@ -12,11 +12,12 @@ import DataView = powerbi.DataView;
 import VisualObjectInstanceEnumerationObject = powerbi.VisualObjectInstanceEnumerationObject;
 
 import { VisualSettings } from "./settings";
+
 export class Visual implements IVisual {
     private target: HTMLElement;
     private settings: VisualSettings;
 
-    constructor(options: VisualConstructorOptions) {
+     constructor(options: VisualConstructorOptions) {
         console.log('Visual constructor', options);
         this.target = options.element;
     }
@@ -66,18 +67,20 @@ export class Visual implements IVisual {
                       EngagementStartDate: v[index][4],
                       EngagementEndDate: v[index][5],
                       Tags: v[index][6],
-                      index:data.length
+                      index:data.length,
+                      Link:v[index][11],
+                      Participation:[],
+                      maxParticipation:0
                   })
                 }
               }
-              v[index][12]=data.length-1;            
+              v[index][12]=data.length-1;
           }
-
           //console.log(data)
           //#endregion
 
           var bars="";
-
+  
           //#region Define minDate and maxDate
           var minDate=new Date(data[0].EngagementStartDate);
           var maxDate=new Date(data[0].EngagementEndDate);
@@ -119,6 +122,7 @@ export class Visual implements IVisual {
           var diffDateDays=Math.ceil(diffDate/(1000 * 60 * 60 * 24));
           //#endregion
            
+
           const scrollBarWidth=25;
           var divWidth=options.viewport.width-scrollBarWidth;
           var divHeight=options.viewport.height;
@@ -134,6 +138,65 @@ export class Visual implements IVisual {
           const FONTTITLE=this.settings.dataPoint.FONTTITLE;
           const TAGCOLOR=this.settings.dataPoint.TAGCOLOR;
           const FONTYEAR=FONTMONTH+2;
+          const SHOWDETAIL=this.settings.dataPoint.SHOWDETAIL;
+
+
+          //ADD PARTICIPATIONS TO THE DATA OBJECT
+          for (let index = 0; index < vT; index++) {
+            if (v[index][12]!=-1){
+
+            var sD=new Date(v[index][9].toString());
+            var dd=this.daysFromStart( sD, minDate );
+            if (dd>0){
+              var x1= dd/diffDateDays * divWidth;
+              var w=Math.round(+v[index][10] *divWidth/diffDateDays);
+              // console.log(w);
+              //def color: (7)
+              var color:string="gray";
+              switch (v[index][7].toString().substr(0,3)) {
+                case "Cod":
+                    color="red";
+                    break;
+                case "Eng":
+                    color="purple";
+                    break;
+                case "Tec":
+                  color="orange";                  
+                  break;
+                case "Arc":
+                  color="green";
+                  break;
+                default:
+                  break;
+              }
+              var title=v[index][1] + "\n" + v[index][7] + "\n" + v[index][8] + "\n" + v[index][9] + "\n" + v[index][10];
+
+              const elem=data[+(v[index][12])];
+              var foundRow=-1;
+              for(var j=0;j<elem.Participation.length;j++){
+                //console.log(elem.Participation[j].owner + "-" + v[index][8])
+                if (elem.Participation[j].owner==v[index][8])
+                {
+                  foundRow=j;
+                  break;
+                }
+              }
+              if (foundRow==-1){
+                console.log("NEW:" + v[index][8] + " - " + data[+v[index][12]].maxParticipation)
+                data[+v[index][12]].maxParticipation++;
+              }
+
+              elem.Participation.push({
+                x:x1,
+                w:w,
+                title:title,
+                owner:v[index][8],
+                color:color,
+                overlap:foundRow
+              });
+            }
+          }
+          }
 
           //#region Draw Header
           var start=minDate.getFullYear() + this.to2(minDate.getMonth());
@@ -177,6 +240,7 @@ export class Visual implements IVisual {
           bars+="<div style='display:flex;width:" + divWidth + "px;font-size:" + FONTMONTH + "px;'>" + barMD + "</div>";
           //#endregion
           
+          //#region Order Data Object
           if (this.settings.dataPoint.ORDERBYPI){
             //SORT DATA ON PI
             data.sort((a,b) => (
@@ -191,9 +255,11 @@ export class Visual implements IVisual {
               a.dateStart > b.dateStart ? 1 : -1
               ));
           }
+          //#endregion
         
           //#region PROCESS ENGAGEMENTS
-          var y=20;
+
+          var y=40+BARPADDING;
           //FOR EACH BAR SET THE Y AND THE MAX Y
           for (let index = 0; index < data.length; index++) {
             const element = data[index];
@@ -221,9 +287,12 @@ export class Visual implements IVisual {
           
               element.x1=x1;
               element.x2=x2;
+              var p=0;
+              if (SHOWDETAIL)
+                p=element.maxParticipation*15;
           
-              y=y+BARHEIGHT+BARPADDING;
               element.y=y;
+              y=y+BARHEIGHT+BARPADDING+p;
             }
           }
           var yMax=y;
@@ -240,8 +309,6 @@ export class Visual implements IVisual {
                   + element.dateEnd.toISOString().substr(0,10) + "\n" 
                   + element.State + "\n" 
                   + element.Owner;
-            //  PriorityIndex: +v[index][0],
-            //  Tags: v[index][6],
 
               var x1=element.x1;
               var x2=element.x2;
@@ -249,24 +316,26 @@ export class Visual implements IVisual {
               var dummy;
               var t="";
               if (element.Tags!=null){
-                console.log(element.Tags)
                 dummy=element.Tags.split(";");
                 dummy.forEach(element => {
                     if (element.trim().startsWith("#IS_"))
                     {
-                          if (t!="") 
-                              t+=", ";
-                          t+=element.trim().substr(1).replace("&","&amp;");
-                      }
+                      if (t!="") 
+                          t+=", ";
+                      t+=element.trim().substr(1).replace("&","&amp;");
+                    }
                 }); 
-                console.log(t)
               }
               if (x1+x2>divWidth)
               {
                   x2=divWidth-x1;
               }
-              bars+=`<div class=bar style='position:absolute;left:${x1+2}px;top:${y}px;height:${BARHEIGHT}px;width:${x2}px;font-size:${FONTTITLE}px;font-weight:bold;' title='${title}'>${a}</div>`;
-              bars+=`<div style='color:blue;position:absolute;left:${x1+x2-150}px;top:${y+1}px;font-size:${FONTOWNER}px;text-align:right;width:150px;font-weight:bold'>${element.Owner}</div>`;
+
+              if (element.Link!=null)
+                bars+=`<div class=bar style='position:absolute;left:${x1+2}px;top:${y}px;height:${BARHEIGHT}px;width:${x2}px;font-size:${FONTTITLE}px;font-weight:bold;' title='${title}'><a href='${element.Link}' target='LINK'>${a}</a></div>`;
+              else
+                bars+=`<div class=bar style='position:absolute;left:${x1+2}px;top:${y}px;height:${BARHEIGHT}px;width:${x2}px;font-size:${FONTTITLE}px;font-weight:bold;' title='${title}'>${a}</div>`;
+              bars+=`<div style='color:blue;position:absolute;left:${x1+x2-150}px;top:${y+1}px;font-size:${FONTOWNER}px;text-align:right;width:150px;font-weight:bold' onclick=''>${element.Owner}</div>`;
               bars+=`<div style='color:green;position:absolute;left:${x1+x2-100}px;top:${y-1+BARHEIGHT-12}px;font-size:${FONTOWNER}px;text-align:right;width:100px;height:${BARHEIGHT}px;'>${element.State}</div>`;
 
               bars+=`<div style='color:black;background-color:${TAGCOLOR};position:absolute;left:${x1+4}px;top:${y-1+BARHEIGHT-12}px;font-size:${FONTOWNER}px;text-align:left;'><b>${element.PriorityIndex}</b> | ${t}</div>`;
@@ -278,77 +347,86 @@ export class Visual implements IVisual {
           bars=bars.replace("###2000###",(yMax+30).toString());
 
           console.log(data)
-          for (var index=0;index<vT;index++)
+          for (var index=0;index<data.length;index++)
           {
-            var sD=new Date(v[index][9].toString());
-            var dd=this.daysFromStart( sD, minDate );
-
-            var pos=+v[index][12];
-            var dataPos=-1;
-            for(var index2=0;index2<data.length;index2++)
-            {
-              if (data[index2].index==pos){
-                dataPos=index2;
-                break;
-              }
-            }
-
-            if (dd>0 && dataPos!=-1 && data[dataPos].y!=-1){
-              // console.log(v[index])
-              // console.log("DRAW")
-              // console.log(v[index])
-              // console.log ("Date:" + sD + " ( days:" + dd + ")");
-              // console.log("Engagement:" + dataPos)
+            var Parts=data[index].Participation;
+            // if (data[index].maxParticipation>1)
+            // {
+              if (data[index].y!=-1){
+                var yPos=0;
+                for (var i=0;i<Parts.length;i++){
+                  x1=Parts[i].x;
+                  w=Parts[i].w;
+                  title=Parts[i].title;
+                  color=Parts[i].color;
+                  //MAIN BAR
+                  bars+=`<div class=partic style='background-color:${color};left:${x1}px;top:${data[index].y}px;font-size:${FONTOWNER}px;height:${BARHEIGHT}px;width:${w}px;' title="${title}"></div>`;
+                  //Parts[i].owner
+                  var pp:string= Parts[i].owner;
   
+                  if (SHOWDETAIL){
 
-              var x1= dd/diffDateDays * divWidth;
-
-              var w=+v[index][10];
-              w=Math.round(w*divWidth/diffDateDays);
-              // console.log(w);
-              
-              
-              //def color: (7)
-              var color:string="gray";
-              switch (v[index][7].toString().substr(0,3)) {
-                case "Cod":
-                    color="red";
-                    break;
-                case "Eng":
-                    color="purple";
-                    break;
-                case "Tec":
-                  color="orange";                  
-                  break;
-                case "Arc":
-                  color="green";
-                  break;
-                default:
-                  break;
-              }
-              // console.log(v[index][7].toString().substr(0,3) + "->" + color);
-
-              var title=v[index][1] + "\n" + v[index][7] + "\n" + v[index][8] + "\n" + v[index][9] + "\n" + v[index][10];
+                  var iPos=i;
+                  if (Parts[i].overlap!=-1)
+                    iPos=Parts[i].overlap;
+                  else
+                    iPos=yPos;
   
-              bars+=`<div style='opacity:0.3;background-color:${color};position:absolute;left:${x1}px;top:${data[dataPos].y}px;font-size:${FONTOWNER}px;text-align:left;height:${BARHEIGHT}px;width:${w}px;' title="${title}"></div>`;
-            }
-
+                  //BACKGROUND BAR
+                  if (Parts[i].overlap==-1){
+                    var mx2=data[index].x2;
+                    if (data[index].x1+mx2>divWidth)
+                    {
+                        mx2=divWidth-data[index].x1;
+                    }                
+                    bars+=`<div class=bar style='background-color:#efefef;color:gray;position:absolute;left:${data[index].x1+2}px;top:${data[index].y+BARHEIGHT+(yPos*15)}px;height:15px;width:${mx2}px;font-size:${FONTTITLE}px;font-weight:bold;text-align:right;'>${pp}</div>`;
+                    yPos++;
+                  }
+                    
+                  //bars+=`<div class=partic style='background-color:"white";left:${data[index].x}px;top:${data[index].y+i*15}px;font-size:${FONTOWNER}px;height:15px;width:${data[index].w}px;' title="${title}">${pp}</div>`;
+                  bars+=`<div class=partic style='background-color:${color};left:${x1}px;top:${data[index].y+BARHEIGHT+iPos*15}px;font-size:${FONTOWNER}px;height:15px;width:${w}px;' title="${title}"></div>`;
+                }
+              }
+              }
+  
+            // }
            }
 
+          var divElem=this.createDivElement({
+            "width": (divWidth+scrollBarWidth) + "px",
+            "height":divHeight + "px",
+            "style":"overflow-y:scroll;height:" + divHeight + "px"
+          })
 
+          var divElemInner=this.createDivElement({
+            "style":"position:relative" 
+          })
 
-            this.target.innerHTML="<div style='width:" + (divWidth+scrollBarWidth) + "px;height:" + divHeight + "px;overflow-y:scroll'>" 
-            + "<div style=position:relative>"
-            + bars 
-                + "</div>"
-                + "</div>";
+           divElemInner.innerHTML=bars;
+           divElem.appendChild(divElemInner);
+
+           this.target.innerHTML=divElem.outerHTML;
         }
         catch(e)
         {
+          console.log(e)
             this.target.innerHTML="<pre>" + JSON.stringify(e) + "</pre>";
             console.log(JSON.stringify(e));
         }
 
+        this.target.addEventListener('onmouseup', function(ev:MouseEvent) {
+          console.log(ev.srcElement);
+        });
+       
+    }
+
+    private createDivElement(attribs){
+      var divElem=document.createElement("div");
+      for (let key in attribs) {
+        divElem.setAttribute(key,attribs[key]);
+      };
+
+      return divElem;
     }
 
     private daysFromStart(date,initialDate){

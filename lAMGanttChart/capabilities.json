@@ -54,8 +54,12 @@
             "displayName": "Duration",
             "name": "particEndDate",
             "kind": "GroupingOrMeasure"
-        }
-    ],
+        },
+        {
+            "displayName": "Engagement Link",
+            "name": "link",
+            "kind": "GroupingOrMeasure"
+        }    ],
     "objects": {
         "dataPoint": {
             "displayName": "Chart Properties",
@@ -148,6 +152,12 @@
                         "bool":true
                     }
                 },
+                "SHOWDETAIL":{ 
+                    "displayName": "Show Participants",
+                    "type": { 
+                        "bool":true
+                    }
+                },
                 "debug":{ 
                     "displayName": "Debug",
                     "type": { 
@@ -172,7 +182,8 @@
                         { "bind": { "to": "activityType" } },
                         { "bind": { "to": "partic" } },
                         { "bind": { "to": "particStartDate" } },
-                        { "bind": { "to": "particEndDate" } }
+                        { "bind": { "to": "particEndDate" } },
+                        { "bind": { "to": "link" } }                        
                     ]
                 }
             }

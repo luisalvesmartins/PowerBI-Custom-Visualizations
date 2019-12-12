@@ -59,7 +59,36 @@
             "displayName": "Engagement Link",
             "name": "link",
             "kind": "GroupingOrMeasure"
+        },
+        {
+            "displayName": "User Highlight",
+            "name": "userHighlight",
+            "kind": "GroupingOrMeasure"
         }    ],
+        "dataViewMappings": [
+            {
+                "table": {
+                    "rows": {
+                        "select": [
+                            { "bind": { "to": "priorityIndex" } },
+                            { "bind": { "to": "title" } },
+                            { "bind": { "to": "state" } },
+                            { "bind": { "to": "owner" } },
+                            { "bind": { "to": "startDate" } },
+                            { "bind": { "to": "endDate" } },
+                            { "bind": { "to": "Tags" } },
+                            { "bind": { "to": "activityType" } },
+                            { "bind": { "to": "partic" } },
+                            { "bind": { "to": "particStartDate" } },
+                            { "bind": { "to": "particEndDate" } },
+                            { "bind": { "to": "link" } },
+                            { "bind": { "to": "userHighlight" } }
+                        ]
+                    }
+                }
+            }
+        ],
+    
     "objects": {
         "colorsSelection":{
             "displayName": "Colors",
@@ -185,27 +214,5 @@
         }
     },
     "supportsHighlight": true,
-    "supportsSynchronizingFilterState": true,
-    "dataViewMappings": [
-        {
-            "table": {
-                "rows": {
-                    "select": [
-                        { "bind": { "to": "priorityIndex" } },
-                        { "bind": { "to": "title" } },
-                        { "bind": { "to": "state" } },
-                        { "bind": { "to": "owner" } },
-                        { "bind": { "to": "startDate" } },
-                        { "bind": { "to": "endDate" } },
-                        { "bind": { "to": "Tags" } },
-                        { "bind": { "to": "activityType" } },
-                        { "bind": { "to": "partic" } },
-                        { "bind": { "to": "particStartDate" } },
-                        { "bind": { "to": "particEndDate" } },
-                        { "bind": { "to": "link" } }                        
-                    ]
-                }
-            }
-        }
-    ]
+    "supportsSynchronizingFilterState": true
 }

@@ -56,6 +56,8 @@ export class Visual implements IVisual {
         const FINALDATE=this.settings.chartConfiguration.FINALDATE;
 
         const FONTYEAR=FONTMONTH+2;
+        
+        const PARTICIPATIONCOLUMN=13;
 
         // let selectionIdBuilder: SelectionIdBuilder = new SelectionIdBuilder(
         //   this.visualHost
@@ -67,7 +69,6 @@ export class Visual implements IVisual {
 
           var vT=v.length;
           //console.log("Length:" + v[0].length)
-
           //#region COPY DATA TO data
           var lastRec:string="";
           for (let index = 0; index < vT; index++) {
@@ -95,13 +96,13 @@ export class Visual implements IVisual {
                       index:data.length,
                       Link:v[index][11],
                       Participation:[],
-                      maxParticipation:0
+                      maxParticipation:0,
+                      Highlight:v[index][12]
                   })
                 }
               }
-              v[index][12]=data.length-1;
+              v[index][PARTICIPATIONCOLUMN]=data.length-1;
           }
-          //console.log(data)
           //#endregion
 
           var bars="";
@@ -156,7 +157,7 @@ export class Visual implements IVisual {
 
           //ADD PARTICIPATIONS TO THE DATA OBJECT
           for (let index = 0; index < vT; index++) {
-            if (v[index][12]!=-1){
+            if (v[index][PARTICIPATIONCOLUMN]!=-1){
 
             var sD=new Date(v[index][9].toString());
             var dd=this.daysFromStart( sD, minDate );
@@ -184,7 +185,7 @@ export class Visual implements IVisual {
               }
               var title=v[index][1] + "\n" + v[index][7] + "\n" + v[index][8] + "\n" + v[index][9] + "\n" + v[index][10];
 
-              const elem=data[+(v[index][12])];
+              const elem=data[+(v[index][PARTICIPATIONCOLUMN])];
               var foundRow=-1;
               for(var j=0;j<elem.Participation.length;j++){
                 //console.log(elem.Participation[j].owner + "-" + v[index][8])
@@ -196,7 +197,7 @@ export class Visual implements IVisual {
               }
               //foundRow=-1;
               if (foundRow==-1){
-                data[+v[index][12]].maxParticipation++;
+                data[+v[index][PARTICIPATIONCOLUMN]].maxParticipation++;
               }
 
               elem.Participation.push({
@@ -205,7 +206,8 @@ export class Visual implements IVisual {
                 title:title,
                 owner:v[index][8],
                 color:color,
-                overlap:foundRow
+                overlap:foundRow,
+                Highlight:v[index][12]
               });
             }
           }
@@ -401,7 +403,10 @@ export class Visual implements IVisual {
                         mx2=divWidth-data[index].x1;
                     }
                     Parts[i].y=data[index].y+BARHEIGHT+(yPos*15);
-                    bars+=`<div class=bar style='background-color:#efefef;color:gray;position:absolute;left:${data[index].x1+2}px;top:${data[index].y+BARHEIGHT+(yPos*15)}px;height:15px;width:${mx2}px;font-size:${FONTTITLE}px;font-weight:bold;text-align:right;'>${pp}</div>`;
+                    if (Parts[i].Highlight=="Yes")
+                      bars+=`<div class=bar style='background-color:#f2f2f2;color:black;position:absolute;left:${data[index].x1+2}px;top:${data[index].y+BARHEIGHT+(yPos*15)}px;height:15px;width:${mx2}px;font-size:${FONTTITLE}px;font-weight:bold;text-align:right;'>${pp}</div>`;
+                    else
+                      bars+=`<div class=bar style='background-color:#efefef;color:gray;position:absolute;left:${data[index].x1+2}px;top:${data[index].y+BARHEIGHT+(yPos*15)}px;height:15px;width:${mx2}px;font-size:${FONTTITLE}px;text-align:right;'>${pp}</div>`;
                     yPos++;
                   }
                   else
@@ -440,7 +445,8 @@ export class Visual implements IVisual {
         catch(e)
         {
           console.log(e)
-            this.target.innerHTML="<pre>" + JSON.stringify(e) + "</pre>";
+            this.target.innerHTML="ERROR:";
+            this.target.innerHTML+=e.description + "<br>" + e.message;
             console.log(JSON.stringify(e));
         }
 

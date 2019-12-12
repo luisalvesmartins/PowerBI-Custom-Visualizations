@@ -6,6 +6,7 @@ import powerbi from "powerbi-visuals-api";
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
 import IVisual = powerbi.extensibility.visual.IVisual;
+import IVisualHost = powerbi.extensibility.visual.IVisualHost;
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 import VisualObjectInstance = powerbi.VisualObjectInstance;
 import DataView = powerbi.DataView;
@@ -13,13 +14,16 @@ import VisualObjectInstanceEnumerationObject = powerbi.VisualObjectInstanceEnume
 
 import { Settings } from "./settings/settings";
 
+
 export class Visual implements IVisual {
     private target: HTMLElement;
     private settings: Settings;
+    private host:IVisualHost;
 
      constructor(options: VisualConstructorOptions) {
         console.log('Visual constructor', options);
         this.target = options.element;
+        this.host=options.host;
     }
     
     public update(options: VisualUpdateOptions) {
@@ -32,10 +36,8 @@ export class Visual implements IVisual {
             [key: string]: any
         }
 
+
         this.settings = Visual.parseSettings(options && options.dataViews && options.dataViews[0]);
-
-        const topElement: HTMLElement = document.createElement("div");
-
 
         const BACKGROUND_COLOR_ODD=this.settings.colorsSelection.BACKGROUND_COLOR_ODD;
         const BACKGROUND_COLOR_EVEN=this.settings.colorsSelection.BACKGROUND_COLOR_EVEN;
@@ -48,18 +50,23 @@ export class Visual implements IVisual {
         const FONTMONTH=this.settings.fontSelection.FONTMONTH;
         const FONTTITLE=this.settings.fontSelection.FONTTITLE;
         const SHOWDETAIL=this.settings.chartConfiguration.SHOWDETAIL;
+        const SHOWDETAILOVERLAP=this.settings.chartConfiguration.SHOWDETAILOVERLAP;
 
         const INITIALDATE=this.settings.chartConfiguration.INITIALDATE;
         const FINALDATE=this.settings.chartConfiguration.FINALDATE;
 
         const FONTYEAR=FONTMONTH+2;
 
+        // let selectionIdBuilder: SelectionIdBuilder = new SelectionIdBuilder(
+        //   this.visualHost
+        //   );
+
         try{
           var v=options.dataViews[0].table.rows;
           var data:myDataType=[];
 
           var vT=v.length;
-          console.log("Length:" + v[0].length)
+          //console.log("Length:" + v[0].length)
 
           //#region COPY DATA TO data
           var lastRec:string="";
@@ -187,8 +194,8 @@ export class Visual implements IVisual {
                   break;
                 }
               }
+              //foundRow=-1;
               if (foundRow==-1){
-                console.log("NEW:" + v[index][8] + " - " + data[+v[index][12]].maxParticipation)
                 data[+v[index][12]].maxParticipation++;
               }
 
@@ -352,7 +359,7 @@ export class Visual implements IVisual {
           //EXTEND BACKDROP
           bars=bars.replace("###2000###",(yMax+30).toString());
 
-          console.log(data)
+          //console.log(data)
           for (var index=0;index<data.length;index++)
           {
             var Parts=data[index].Participation;
@@ -366,7 +373,14 @@ export class Visual implements IVisual {
                   title=Parts[i].title;
                   color=Parts[i].color;
                   //MAIN BAR
-                  bars+=`<div class=partic style='background-color:${color};left:${x1}px;top:${data[index].y}px;font-size:${FONTOWNER}px;height:${BARHEIGHT}px;width:${w}px;' title="${title}"></div>`;
+                  if (x1<divWidth){
+                    if (x1+w>divWidth)
+                    {
+                        w=divWidth-x1;
+                    }
+                    if (SHOWDETAILOVERLAP)      
+                      bars+=`<div class=partic style='background-color:${color};left:${x1}px;top:${data[index].y}px;font-size:${FONTOWNER}px;height:${BARHEIGHT}px;width:${w}px;' title="${title}"></div>`;
+                  }
                   //Parts[i].owner
                   var pp:string= Parts[i].owner;
   
@@ -377,20 +391,30 @@ export class Visual implements IVisual {
                     iPos=Parts[i].overlap;
                   else
                     iPos=yPos;
-  
+                  
+                  var yy=data[index].y+BARHEIGHT+iPos*15;
                   //BACKGROUND BAR
                   if (Parts[i].overlap==-1){
                     var mx2=data[index].x2;
                     if (data[index].x1+mx2>divWidth)
                     {
                         mx2=divWidth-data[index].x1;
-                    }                
+                    }
+                    Parts[i].y=data[index].y+BARHEIGHT+(yPos*15);
                     bars+=`<div class=bar style='background-color:#efefef;color:gray;position:absolute;left:${data[index].x1+2}px;top:${data[index].y+BARHEIGHT+(yPos*15)}px;height:15px;width:${mx2}px;font-size:${FONTTITLE}px;font-weight:bold;text-align:right;'>${pp}</div>`;
                     yPos++;
                   }
+                  else
+                  {
+                    yy=Parts[Parts[i].overlap].y
+                  }
+
                     
-                  //bars+=`<div class=partic style='background-color:"white";left:${data[index].x}px;top:${data[index].y+i*15}px;font-size:${FONTOWNER}px;height:15px;width:${data[index].w}px;' title="${title}">${pp}</div>`;
-                  bars+=`<div class=partic style='background-color:${color};left:${x1}px;top:${data[index].y+BARHEIGHT+iPos*15}px;font-size:${FONTOWNER}px;height:15px;width:${w}px;' title="${title}"></div>`;
+                  if (x1<divWidth){
+                    //bars+=`<div class=partic style='background-color:"white";left:${data[index].x}px;top:${data[index].y+i*15}px;font-size:${FONTOWNER}px;height:15px;width:${data[index].w}px;' title="${title}">${pp}</div>`;
+                    bars+=`<div class=partic style='background-color:${color};left:${x1}px;top:${yy}px;font-size:${FONTOWNER}px;height:15px;width:${w}px;' title="${title}"></div>`;
+
+                  }
                 }
               }
               }
@@ -401,7 +425,7 @@ export class Visual implements IVisual {
           var divElem=this.createDivElement({
             "width": (divWidth+scrollBarWidth) + "px",
             "height":divHeight + "px",
-            "style":"overflow-y:scroll;height:" + divHeight + "px"
+            "style":"overflow-y:scroll;overflow-x:hidden;height:" + divHeight + "px"
           })
 
           var divElemInner=this.createDivElement({
@@ -420,8 +444,8 @@ export class Visual implements IVisual {
             console.log(JSON.stringify(e));
         }
 
-        this.target.addEventListener('onmouseup', function(ev:MouseEvent) {
-          console.log(ev.srcElement);
+        this.target.addEventListener('click',()=>{
+          // console.log(window.event.srcElement)
         });
        
     }

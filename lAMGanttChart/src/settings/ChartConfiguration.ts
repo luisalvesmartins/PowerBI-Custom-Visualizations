@@ -5,6 +5,7 @@ export class ChartConfiguration {
     public FINALDATE : string = "";
     public ORDERBYPI:boolean=false;
     public SHOWDETAIL:boolean=false;
+    public SHOWDETAILOVERLAP:boolean=true;
 
     public debug:boolean=false;
 }

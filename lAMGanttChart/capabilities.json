@@ -169,6 +169,12 @@
                         "bool":true
                     }
                 },
+                "SHOWDETAILOVERLAP":{ 
+                    "displayName": "Overlay participant data on main bar",
+                    "type": { 
+                        "bool":true
+                    }
+                },
                 "debug":{ 
                     "displayName": "Debug",
                     "type": { 

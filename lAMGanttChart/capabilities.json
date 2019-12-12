@@ -61,8 +61,8 @@
             "kind": "GroupingOrMeasure"
         }    ],
     "objects": {
-        "dataPoint": {
-            "displayName": "Chart Properties",
+        "colorsSelection":{
+            "displayName": "Colors",
             "properties": {
                 "BACKGROUND_COLOR_ODD": {
                     "displayName": "Background Color Odd",
@@ -94,18 +94,22 @@
                         }
                     }
                 },
-                "BARHEIGHT": {
-                    "displayName": "Bar Height",
+                "TAGCOLOR": {
+                    "displayName": "Background Color Tag",
                     "type": {
-                        "numeric": true
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
                     }
-                },
-                "BARPADDING": {
-                    "displayName": "Bar Padding",
-                    "type": {
-                        "numeric": true
-                    }
-                },
+                }
+            }
+        },
+        "fontSelection":{
+            "displayName": "Fonts",
+            "displayNameKey": "Visual_Fonts",
+            "properties": {
                 "FONTTITLE": {
                     "displayName": "Font Size Bar Title",
                     "type": {
@@ -123,6 +127,23 @@
                     "type": { 
                         "numeric": true
                     }
+                }
+            }
+        },
+        "chartConfiguration": {
+            "displayName": "Chart Configuration",
+            "properties": {
+                "BARHEIGHT": {
+                    "displayName": "Bar Height",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "BARPADDING": {
+                    "displayName": "Bar Padding",
+                    "type": {
+                        "numeric": true
+                    }
                 },
                 "INITIALDATE": {
                     "displayName": "Initial Date(yyyy-mm-dd)",
@@ -134,16 +155,6 @@
                     "displayName": "Final Date(yyyy-mm-dd)",
                     "type": {
                         "text": true
-                    }
-                },
-                "TAGCOLOR": {
-                    "displayName": "Background Color Tag",
-                    "type": {
-                        "fill": {
-                            "solid": {
-                                "color": true
-                            }
-                        }
                     }
                 },
                 "ORDERBYPI":{ 
@@ -167,6 +178,8 @@
             }
         }
     },
+    "supportsHighlight": true,
+    "supportsSynchronizingFilterState": true,
     "dataViewMappings": [
         {
             "table": {

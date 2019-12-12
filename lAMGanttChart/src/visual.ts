@@ -11,11 +11,11 @@ import VisualObjectInstance = powerbi.VisualObjectInstance;
 import DataView = powerbi.DataView;
 import VisualObjectInstanceEnumerationObject = powerbi.VisualObjectInstanceEnumerationObject;
 
-import { VisualSettings } from "./settings";
+import { Settings } from "./settings/settings";
 
 export class Visual implements IVisual {
     private target: HTMLElement;
-    private settings: VisualSettings;
+    private settings: Settings;
 
      constructor(options: VisualConstructorOptions) {
         console.log('Visual constructor', options);
@@ -35,6 +35,24 @@ export class Visual implements IVisual {
         this.settings = Visual.parseSettings(options && options.dataViews && options.dataViews[0]);
 
         const topElement: HTMLElement = document.createElement("div");
+
+
+        const BACKGROUND_COLOR_ODD=this.settings.colorsSelection.BACKGROUND_COLOR_ODD;
+        const BACKGROUND_COLOR_EVEN=this.settings.colorsSelection.BACKGROUND_COLOR_EVEN;
+        const BORDER_COLOR=this.settings.colorsSelection.BORDER_COLOR;
+        const TAGCOLOR=this.settings.colorsSelection.TAGCOLOR;
+
+        const BARHEIGHT=this.settings.chartConfiguration.BARHEIGHT;
+        const BARPADDING=this.settings.chartConfiguration.BARPADDING;
+        const FONTOWNER=this.settings.fontSelection.FONTOWNER;
+        const FONTMONTH=this.settings.fontSelection.FONTMONTH;
+        const FONTTITLE=this.settings.fontSelection.FONTTITLE;
+        const SHOWDETAIL=this.settings.chartConfiguration.SHOWDETAIL;
+
+        const INITIALDATE=this.settings.chartConfiguration.INITIALDATE;
+        const FINALDATE=this.settings.chartConfiguration.FINALDATE;
+
+        const FONTYEAR=FONTMONTH+2;
 
         try{
           var v=options.dataViews[0].table.rows;
@@ -96,21 +114,21 @@ export class Visual implements IVisual {
                 minDate=sd;
           });
 
-          if (this.settings.dataPoint.INITIALDATE!="")
+          if (INITIALDATE!="")
           {
-              if (this.settings.dataPoint.INITIALDATE.length<10)
+              if (INITIALDATE.length<10)
                   return;
-              minDate=new Date(+this.settings.dataPoint.INITIALDATE.substr(0,4), 
-                          +this.settings.dataPoint.INITIALDATE.substr(5,2)-1,
-                          +this.settings.dataPoint.INITIALDATE.substr(8,2));
+              minDate=new Date(+INITIALDATE.substr(0,4), 
+                          +INITIALDATE.substr(5,2)-1,
+                          +INITIALDATE.substr(8,2));
           }
-          if (this.settings.dataPoint.FINALDATE!="")
+          if (FINALDATE!="")
           {
-              if (this.settings.dataPoint.FINALDATE.length<10)
+              if (FINALDATE.length<10)
                   return;
-              maxDate=new Date(+this.settings.dataPoint.FINALDATE.substr(0,4), 
-                          +this.settings.dataPoint.FINALDATE.substr(5,2)-1,
-                          +this.settings.dataPoint.FINALDATE.substr(8,2));
+              maxDate=new Date(+FINALDATE.substr(0,4), 
+                          +FINALDATE.substr(5,2)-1,
+                          +FINALDATE.substr(8,2));
           }
           maxDate=new Date(maxDate.getFullYear(), maxDate.getMonth()+1,1);
           maxDate.setDate(maxDate.getDate()-1);
@@ -128,18 +146,6 @@ export class Visual implements IVisual {
           var divHeight=options.viewport.height;
           //STATUS & TAGS
             
-          const BACKGROUND_COLOR_ODD=this.settings.dataPoint.BACKGROUND_COLOR_ODD;
-          const BACKGROUND_COLOR_EVEN=this.settings.dataPoint.BACKGROUND_COLOR_EVEN;
-          const BORDER_COLOR=this.settings.dataPoint.BORDER_COLOR;
-          const BARHEIGHT=this.settings.dataPoint.BARHEIGHT;
-          const BARPADDING=this.settings.dataPoint.BARPADDING;
-          const FONTOWNER=this.settings.dataPoint.FONTOWNER;
-          const FONTMONTH=this.settings.dataPoint.FONTMONTH;
-          const FONTTITLE=this.settings.dataPoint.FONTTITLE;
-          const TAGCOLOR=this.settings.dataPoint.TAGCOLOR;
-          const FONTYEAR=FONTMONTH+2;
-          const SHOWDETAIL=this.settings.dataPoint.SHOWDETAIL;
-
 
           //ADD PARTICIPATIONS TO THE DATA OBJECT
           for (let index = 0; index < vT; index++) {
@@ -241,7 +247,7 @@ export class Visual implements IVisual {
           //#endregion
           
           //#region Order Data Object
-          if (this.settings.dataPoint.ORDERBYPI){
+          if (this.settings.chartConfiguration.ORDERBYPI){
             //SORT DATA ON PI
             data.sort((a,b) => (
               a.PriorityIndex > b.PriorityIndex ? -1 : 0
@@ -439,11 +445,11 @@ export class Visual implements IVisual {
             return n.toString();
     }
 
-    private static parseSettings(dataView: DataView): VisualSettings {
-        return <VisualSettings>VisualSettings.parse(dataView);
+    private static parseSettings(dataView: DataView): Settings {
+        return <Settings>Settings.parse(dataView);
     }
 
     public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] | VisualObjectInstanceEnumerationObject {
-        return VisualSettings.enumerateObjectInstances(this.settings || VisualSettings.getDefault(), options);
+        return Settings.enumerateObjectInstances(this.settings || Settings.getDefault(), options);
     }
 }

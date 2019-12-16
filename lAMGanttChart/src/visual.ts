@@ -234,12 +234,12 @@ export class Visual implements IVisual {
             if (iM>11){
               iM=0;
               var x1= this.daysFromStart( new Date(iY+1,0,1), ySP )/diffDateDays * divWidth;
-              barY+="<div style='border:solid 1px " + BORDER_COLOR + ";width:" + x1 + "px;text-align:center;'>" + iY + "</div>";
+              barY+="<div style='border-style:solid;1px;border-color:" + BORDER_COLOR + ";background-color:" + BACKGROUND_COLOR_EVEN + ";width:" + x1 + "px;text-align:center;'>" + iY + "</div>";
               iY++;
               ySP=new Date(iY,iM,1);
             }
             var x1= this.daysFromStart( new Date(iY,iM+1,0), sM )/diffDateDays * divWidth;
-            barM+="<div style='border:solid 1px " + BORDER_COLOR + ";width:" + x1 + "px;background-color:" + backColor + ";text-align:center'>" + t + "</div>";
+            barM+="<div style='border-style:solid;border-width:0 1px 0 1px;border-color:" + BORDER_COLOR + ";width:" + x1 + "px;background-color:" + backColor + ";text-align:center'>" + t + "</div>";
             barMD+="<div style='border:solid 1px " + BORDER_COLOR + ";height:" + "###2000###" + "px;width:" + x1 + "px;background-color:" + backColor + "'></div>";
             if (backColor==BACKGROUND_COLOR_ODD)
               backColor=BACKGROUND_COLOR_EVEN;
@@ -248,7 +248,7 @@ export class Visual implements IVisual {
           }
           var x1= this.daysFromStart( new Date(iY,iM,1), ySP )/diffDateDays * divWidth;
           
-          barY+="<div style='border:solid 1px " + BORDER_COLOR + ";width:" + x1 + "px;text-align:center;'>" + iY + "</div>";
+          barY+="<div style='border-style:solid;1px;border-color:" + BORDER_COLOR + ";background-color:" + BACKGROUND_COLOR_EVEN + ";width:" + x1 + "px;text-align:center;'>" + iY + "</div>";
           
           bars+="<div style='display:flex;width:" + divWidth + "px;font-size:" + FONTYEAR + "px;'>" + barY + "</div>";
           bars+="<div style='display:flex;width:" + divWidth + "px;font-size:" + FONTMONTH + "px;'>" + barM + "</div>";
@@ -346,14 +346,19 @@ export class Visual implements IVisual {
                   x2=divWidth-x1;
               }
 
+              bars+=`<div class=bar style='position:absolute;left:${x1+2}px;top:${y}px;height:${BARHEIGHT}px;width:${x2}px;font-size:${FONTTITLE}px;' title='${title}'>`;
+              bars+=`<div class=innerbar style="font-size:${FONTOWNER}px;">`;
+             
               if (element.Link!=null)
-                bars+=`<div class=bar style='position:absolute;left:${x1+2}px;top:${y}px;height:${BARHEIGHT}px;width:${x2}px;font-size:${FONTTITLE}px;font-weight:bold;' title='${title}'><a href='${element.Link}' target='LINK'>${a}</a></div>`;
+                bars+=`<b><a href='${element.Link}' target='LINK'>${a}</a></b>`;
               else
-                bars+=`<div class=bar style='position:absolute;left:${x1+2}px;top:${y}px;height:${BARHEIGHT}px;width:${x2}px;font-size:${FONTTITLE}px;font-weight:bold;' title='${title}'>${a}</div>`;
-              bars+=`<div style='color:blue;position:absolute;left:${x1+x2-150}px;top:${y+1}px;font-size:${FONTOWNER}px;text-align:right;width:150px;font-weight:bold' onclick=''>${element.Owner}</div>`;
-              bars+=`<div style='color:green;position:absolute;left:${x1+x2-100}px;top:${y-1+BARHEIGHT-12}px;font-size:${FONTOWNER}px;text-align:right;width:100px;height:${BARHEIGHT}px;'>${element.State}</div>`;
+                bars+=`<b>${a}</b>`;
+              bars+=`<div class=topright>${element.Owner}</div>`;
+              bars+=`<div class=bottomright>${element.State}</div>`;
 
-              bars+=`<div style='color:black;background-color:${TAGCOLOR};position:absolute;left:${x1+4}px;top:${y-1+BARHEIGHT-12}px;font-size:${FONTOWNER}px;text-align:left;'><b>${element.PriorityIndex}</b> | ${t}</div>`;
+              bars+=`<div class=bottomleft style='background-color:${TAGCOLOR};'><b>${element.PriorityIndex}</b> | ${t}</div>`;
+              bars+=`</div>`;
+              bars+=`</div>`;
             }
           });
           //#endregion
@@ -451,7 +456,9 @@ export class Visual implements IVisual {
         }
 
         this.target.addEventListener('click',()=>{
-          // console.log(window.event.srcElement)
+          var se=window.event.srcElement;
+          if (se["href"])
+            this.host.launchUrl(se["href"])
         });
        
     }
